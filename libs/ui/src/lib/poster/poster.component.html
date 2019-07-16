@@ -1,0 +1,11 @@
+<div class="react-item movie">
+  <div class="front" (mouseenter)="mouseEnter.next($event)" (mouseleave)="mouseLeave.next($event)">
+    <div *ngIf="!!image" class="front-image" [style.backround-image]="'url(' + image + ')'">
+      <div class="backdrop medium">
+        <div class="react-play-button fill">
+          <figure class="icon-content"></figure>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

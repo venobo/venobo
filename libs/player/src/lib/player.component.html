@@ -1,0 +1,49 @@
+<div class="venobo-player" (dblclick)="toggleFullscreen()" (wheel)="handleVolumeWheel($event)" (mousemove)="mediaMouseMove$.next()">
+  <div class="vask-container">
+    <div class="content-wrapper">
+      <div class="curtain" *ngIf="(state$ | async).loading">
+        <div class="product-image" [style.background-image]="'url('+media.backdrop+')'">
+          <div id="vp-spinner-sheet-container">
+            <div class="sheet-container"></div>
+          </div>
+        </div>
+      </div>
+      <div class="scene" [class.hide]="uiShown$ | async">
+        <div class="backdrop"></div>
+        <div class="top-ui">
+          <div class="ui-cell control-btn browser-back">
+            <button class="browser-back" (click)="confirmNavigateBack()"></button>
+          </div>
+        </div>
+        <div class="bottom-ui">
+          <div class="metadata movie">
+            <div class="ui-cell image" [style.background-image]="'url('+media.poster+')'"></div>
+            <div class="text">
+              <div class="text-container">
+                <h1 class="title">{{ media.title }}</h1>
+                <!--<p class="synopsis">{{ media.summary }}</p>-->
+              </div>
+            </div>
+          </div>
+          <div class="ui-row playback-controls">
+            <div [class]="'ui-cell control-btn' + (state$ | async).paused ? 'pause' : 'play'">
+              <button
+                venoboButton
+                (click)="playPause()"
+                [class]="{ pause: (state$ | async).paused, play: !(state$ | async).paused }"
+                [disabled]="(state$ | async).ready"
+              ></button>
+            </div>
+            <div class="ui-cell timeline">
+              <div class="timeline-mask">
+                <div #seekSlider></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <canvas #renderer class="wcjs-renderer"></canvas>
+  </div>
+</div>
+½

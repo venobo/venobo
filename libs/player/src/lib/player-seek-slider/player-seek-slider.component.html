@@ -1,0 +1,21 @@
+<div class="timeline-mask">
+  <div #seekSlider class="slider horizontal" [class.disabled]="disabled" (click)="handleVideoScrub($event)">
+    <div class="primary" [style.width.%]="percentage">
+      <button class="target-btn" [style.left.%]="percentage">
+        <div
+          venoboDraggable
+          class="handle"
+          (drag)="handleVideoSeeker($event)"
+          (dragend)="handleVideoScrub($event)"
+        ></div>
+      </button>
+    </div>
+  </div>
+  <div
+    class="timeline-tooltip vod"
+    [class.scrubbing]="isDragging"
+    [style.left.%]="percentage"
+  >
+    <label class="ui-cell time-label">{{ scrubbingLabel }}</label>
+  </div>
+</div>

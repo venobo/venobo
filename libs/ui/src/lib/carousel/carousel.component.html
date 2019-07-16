@@ -1,0 +1,22 @@
+<section class="block collection portrait carousel">
+  <div class="scaffold">
+    <i
+      class="navigation prev whiteframe"
+      [class.disabled]="navPrevDisabled"
+      (click)="handlePrev()"
+    ></i>
+    <i
+      class="navigation next whiteframe"
+      [class.disabled]="navNextDisabled"
+      (click)="handleNext()"
+    ></i>
+    <header *ngIf="title">
+
+    </header>
+    <div class="carousel-wrapper" #wrapper>
+      <div class="carousel-inner use-transition" [style.transform]="'translateX('+ innerWidth +'px)'">
+        <venobo-poster *ngFor="let item of items" [image]="item.image"></venobo-poster>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,30 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es5",
+    "module": "esnext",
+    "typeRoots": ["node_modules/@types"],
+    "lib": ["esnext", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@venobo/server": ["libs/server/src/index.ts"],
+      "@venobo/schema": ["libs/schema/src/index.ts"],
+      "@venobo/ui": ["libs/ui/src/index.ts"],
+      "@venobo/testing": ["tools/testing/index.ts"],
+      "@venobo/core": ["libs/core/src/index.ts"],
+      "@venobo/shared": ["libs/shared/src/index.ts"],
+      "@venobo/environment": ["apps/renderer/src/environments/environment.ts"],
+      "@venobo/player": ["libs/player/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

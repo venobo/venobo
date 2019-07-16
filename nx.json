@@ -1,0 +1,33 @@
+{
+  "npmScope": "venobo",
+  "implicitDependencies": {
+    "angular.json": "*",
+    "package.json": "*",
+    "tsconfig.json": "*",
+    "tslint.json": "*",
+    "nx.json": "*"
+  },
+  "projects": {
+    "renderer-e2e": {
+      "tags": []
+    },
+    "renderer": {
+      "tags": []
+    },
+    "main": {
+      "tags": []
+    },
+    "ui": {
+      "tags": []
+    },
+    "core": {
+      "tags": []
+    },
+    "shared": {
+      "tags": []
+    },
+    "player": {
+      "tags": []
+    }
+  }
+}

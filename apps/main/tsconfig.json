@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "types": ["node"],
+    "sourceMap": false,
+    "declaration": false,
+    "moduleResolution": "node",
+    "removeComments": true,
+    "stripInternal": true,
+    "target": "es2017",
+    "lib": ["esnext"]
+  },
+  "include": ["**/*.ts"]
+}

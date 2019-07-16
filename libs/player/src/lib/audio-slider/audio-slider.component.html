@@ -1,0 +1,38 @@
+<span *ngIf="show">
+  <div class="audio-slider" (mouseleave)="mouseleave.emit()">
+    <div #verticalSlider class="slider vertical" (click)="handleAudioScrub($event)">
+      <div class="primary" [style.height.%]="percentage">
+        <button class="target-btn">
+          <div
+            venoboDraggable
+            class="handle"
+            [style.bottom.%]="percentage"
+            (drag)="handleAudioScrub($event)"
+          ></div>
+        </button>
+      </div>
+    </div>
+  </div>
+</span>
+
+<!--
+<div className={isMutedStyle('ui-cell control-btn audio-control')}>
+  {showAudioMenu &&
+    <span>
+      <div className="audio-slider" onMouseLeave={this.hideAudioMenu}>
+        <div className="slider vertical" onClick={this.handleAudioScrub} ref="audioSlider">
+          <div className="primary" style={{height: `${audioSliderPercentage}%`}}>
+            <button className="target-btn">
+              <div className="handle" style={{bottom: `${audioSliderPercentage}%`}}
+                draggable="true"
+                onDragStart={this.handleDragStart}
+                onDrag={this.handleAudioScrub} />
+            </button>
+          </div>
+        </div>
+      </div>
+    </span>
+  }
+  <button ref="audioBtn" onClick={this.muteUnmute} onMouseEnter={this.showAudioMenu} className={isDisabledStyle(isMutedStyle('audio-control'))}></button>
+</div>
+-->
