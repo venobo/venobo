@@ -7,7 +7,7 @@ import { createServerModule } from './app/create-server-module';
 (async () => {
   const imports: Type<any>[] = [];
 
-  if (!environment.serverOnly) {
+  if (environment.isElectron()) {
     const { ElectronModule } = await import('./app/electron');
     imports.push(ElectronModule);
   }
