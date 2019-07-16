@@ -1,6 +1,7 @@
 import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 import { Store } from '@ngxs/store';
-import { ChangeOnlineStatus, IsOffline, IsOnline } from '../state/app';
+
+import { ChangeOnlineStatus, IsOffline, IsOnline } from '../state';
 
 @Injectable({
   providedIn: 'root',
@@ -15,11 +16,17 @@ export class AppHandler {
     this.renderer = rendererFactory.createRenderer(window, null);
 
     this.renderer.listen(window, 'online', () => {
-      this.store.dispatch([new ChangeOnlineStatus(), new IsOnline()]);
+      this.store.dispatch([
+        new ChangeOnlineStatus(),
+        new IsOnline(),
+      ]);
     });
 
     this.renderer.listen(window, 'offline', () => {
-      this.store.dispatch([new ChangeOnlineStatus(), new IsOffline()]);
+      this.store.dispatch([
+        new ChangeOnlineStatus(),
+        new IsOffline(),
+      ]);
     });
   }
 }

@@ -1,22 +1,16 @@
 import { NestFactory } from '@nestjs/core';
-import { Type } from '@nestjs/common';
-
-import { environment } from './environments/environment';
-import { createServerModule } from './app/create-server-module';
+import { environment } from '@venobo/environment/main';
 
 (async () => {
-  const imports: Type<any>[] = [];
-
-  if (environment.isElectron()) {
+  if (environment.isElectron) {
     const { ElectronModule } = await import('./app/electron');
-    imports.push(ElectronModule);
+    await NestFactory.createApplicationContext(ElectronModule);
+  } else {
+    const { ServerModule } = await import('@venobo/server');
+    const app = await NestFactory.create(ServerModule);
+
+    await app.listen(environment.port, () => {
+      console.log(`GraphQL API server listening on port ${environment.port}`);
+    });
   }
-
-  const app = await NestFactory.create(
-    createServerModule(imports),
-  );
-
-  await app.listen(environment.port, () => {
-    console.log(`Main server listening on port ${environment.port}`);
-  });
 })();

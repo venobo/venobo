@@ -1,9 +1,9 @@
 import { Inject, Module, OnModuleInit } from '@nestjs/common';
 import { fromEvent } from 'rxjs';
 import { switchMap, take } from 'rxjs/operators';
+import { environment } from '@venobo/environment/main';
 
-import { environment } from '../../environments/environment';
-import { MAIN_WINDOW, WindowEvent } from './tokens';
+import { MAIN_WINDOW } from './tokens';
 import { MainWindowFactory } from './app-window.factory';
 import { ElectronStore } from './electron-store';
 import { ElectronService } from './electron.service';

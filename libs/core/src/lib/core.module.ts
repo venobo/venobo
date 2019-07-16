@@ -23,7 +23,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
       developmentMode: !environment.production,
     }),
     NgxsStoragePluginModule.forRoot({
-      key: ['fullscreen'],
+      // key: ['app.fullscreen'],
     }),
     NgxsReduxDevtoolsPluginModule.forRoot({
       disabled: environment.production, // Set to true for prod mode

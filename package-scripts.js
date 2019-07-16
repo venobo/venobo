@@ -25,32 +25,32 @@ const ELECTRON_BUNDLE_PATH = join('dist', 'apps', 'main', 'main');
 module.exports = {
   scripts: {
     dev: {
-      frontend: {
-        serve: nps.series(
-          'graphql-codegen --watch',
-          'ng serve renderer --configuration=dev --aot',
+      default: nps.series(
+        'nps dev.server',
+        'nps dev.renderer',
+        'nps dev.main',
+      ),
+      server: 'ng serve main',
+      codegen: 'graphql-codegen --watch',
+      renderer: {
+        serve: 'ng serve renderer --aot',
+        default: nps.series(
+          'nps dev.codegen',
+          'nps dev.renderer.serve',
         ),
       },
-      server: {
+      main: {
         build: 'ng build main --maxWorkers=4 --noSourceMap',
         default: nps.series(
-          'nps dev.server.build',
-          'nps dev.server.start'
+          'nps dev.main.build',
+          'nps dev.main.start',
         ),
         start: 'electron dist/apps/main/main --inspect=9229'
       },
       up: {
-        default: nps.concurrent({
-          server: 'nps dev.server',
-          frontend: 'nps dev.frontend.serve'
-        }),
-        start: nps.concurrent({
-          server: 'nps dev.server.start',
-          frontend: 'nps dev.frontend.serve'
-        }),
         cypress: nps.concurrent({
           server: 'nps dev.server.start',
-          frontend: 'ng run renderer:serve:cypress'
+          renderer: 'ng run renderer:serve:cypress'
         })
       }
     },

@@ -16,14 +16,13 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@venobo/server": ["libs/server/src/index.ts"],
-      "@venobo/schema": ["libs/schema/src/index.ts"],
-      "@venobo/ui": ["libs/ui/src/index.ts"],
-      "@venobo/testing": ["tools/testing/index.ts"],
-      "@venobo/core": ["libs/core/src/index.ts"],
-      "@venobo/shared": ["libs/shared/src/index.ts"],
-      "@venobo/environment": ["apps/renderer/src/environments/environment.ts"],
-      "@venobo/player": ["libs/player/src/index.ts"]
+      "@venobo/ui": ["libs/ui/src"],
+      "@venobo/testing": ["tools/testing"],
+      "@venobo/core": ["libs/core/src"],
+      "@venobo/environment/*": ["apps/*/src/environments"],
+      "@venobo/shared": ["libs/shared/src"],
+      "@venobo/player": ["libs/player/src"],
+      "@venobo/server": ["libs/server/src"]
     }
   },
   "exclude": ["node_modules", "tmp"]
