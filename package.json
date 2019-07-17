@@ -6,8 +6,7 @@
   "scripts": {
     "nx": "nx",
     "ng": "ng",
-    "dev": "nps dev.up",
-    "start": "nps dev.up.start",
+    "start": "nps dev",
     "format": "nps format.write",
     "gen-gql": "nps dev.gen-graphql",
     "update": "ng update @nrwl/workspace"

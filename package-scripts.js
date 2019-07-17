@@ -24,26 +24,24 @@ const ELECTRON_BUNDLE_PATH = join('dist', 'apps', 'main', 'main');
 
 module.exports = {
   scripts: {
+    start: 'electron dist/apps/main/main',
     dev: {
       default: nps.series(
         'nps dev.server',
-        'nps dev.renderer',
+        nps.concurrent(
+          'nps dev.codegen',
+          'nps dev.renderer'
+        ),
         'nps dev.main',
       ),
       server: 'ng serve main',
       codegen: 'graphql-codegen --watch',
-      renderer: {
-        serve: 'ng serve renderer --aot',
-        default: nps.series(
-          'nps dev.codegen',
-          'nps dev.renderer.serve',
-        ),
-      },
+      renderer: 'ng serve renderer --aot',
       main: {
         build: 'ng build main --maxWorkers=4 --noSourceMap',
         default: nps.series(
           'nps dev.main.build',
-          'nps dev.main.start',
+          'nps start',
         ),
         start: 'electron dist/apps/main/main --inspect=9229'
       },
