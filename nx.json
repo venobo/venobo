@@ -28,6 +28,9 @@
     },
     "player": {
       "tags": []
+    },
+    "server": {
+      "tags": []
     }
   }
 }

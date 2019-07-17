@@ -1,9 +1,18 @@
 import { Module, Type } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
+import { NestFactory } from '@nestjs/core';
 
 import { MetadataModule } from './metadata';
 
-export function createServerModule(imports: Type<any>[] = []) {
+export async function startServer(entryModule: Type<any>, port: number) {
+  const app = await NestFactory.create(entryModule);
+
+  await app.listen(port, () => {
+    console.log(`GraphQL server listening on port ${port}`);
+  });
+}
+
+export function createServerModule(...imports: Type<any>[]) {
   @Module({
     imports: [
       GraphQLModule.forRoot({
@@ -21,4 +30,3 @@ export function createServerModule(imports: Type<any>[] = []) {
 
   return ServerModule;
 }
-

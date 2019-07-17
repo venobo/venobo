@@ -6,7 +6,7 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
 import { NgxsModule } from '@ngxs/store';
-import { environment } from '@venobo/environment';
+import { environment } from '@venobo/environment/renderer';
 import { noop } from '@venobo/shared';
 
 import { AppState } from './state';
@@ -23,7 +23,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
       developmentMode: !environment.production,
     }),
     NgxsStoragePluginModule.forRoot({
-      key: ['fullscreen'],
+      // key: ['app.fullscreen'],
     }),
     NgxsReduxDevtoolsPluginModule.forRoot({
       disabled: environment.production, // Set to true for prod mode

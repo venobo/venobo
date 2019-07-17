@@ -3,9 +3,9 @@ import { InjectionToken } from '@angular/core';
 
 declare const __non_webpack_require__: any;
 
-export const WCJS_PLAYER = new InjectionToken<any>('WCJS_PLAYER',{
+/*export const WCJS_PLAYER = new InjectionToken<any>('WCJS_PLAYER',{
   providedIn: 'root',
   factory() {
     return __non_webpack_require__('wcjs-prebuilt').createPlayer();
   },
-});
+});*/

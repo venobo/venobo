@@ -1,10 +1,9 @@
 import { Inject, Module, OnModuleInit } from '@nestjs/common';
-import { fromEvent } from 'rxjs';
-import { switchMap, take } from 'rxjs/operators';
+import { environment } from '@venobo/environment/main';
+import { join } from 'path';
 
-import { environment } from '../../environments/environment';
-import { MAIN_WINDOW, WindowEvent } from './tokens';
-import { MainWindowFactory } from './app-window.factory';
+import { MAIN_WINDOW } from './tokens';
+import { createMainWindowFactory } from './create-main-window.factory';
 import { ElectronStore } from './electron-store';
 import { ElectronService } from './electron.service';
 import { ElectronWindow } from './interfaces';
@@ -15,8 +14,8 @@ import { ElectronWindow } from './interfaces';
     ElectronService,
     {
       provide: MAIN_WINDOW,
-      useFactory: MainWindowFactory,
-      inject: [ElectronStore],
+      useFactory: createMainWindowFactory,
+      inject: [ElectronService, ElectronStore],
     },
   ],
   exports: [
@@ -32,27 +31,29 @@ export class ElectronModule implements OnModuleInit {
     private readonly electron: ElectronService,
   ) {}
 
-  onModuleInit() {
-    return fromEvent(this.electron.app, 'ready').pipe(
-      switchMap(async () => {
-        this.electron.app.setAppUserModelId(process.execPath);
+  async onModuleInit() {
+    const app = await this.electron.ready();
+    app.setAppUserModelId(process.execPath);
 
-        if (!environment.production) {
-          await this.mainWindow.loadURL(`http://localhost:${environment.devServerPort}`);
-        } else {
-          await this.mainWindow.loadFile('');
-        }
+    if (!environment.production) {
+      await this.mainWindow.loadURL(`http://localhost:${environment.devServerPort}`);
+    } else {
+      const filePath = join(__dirname, '../renderer/index.html');
+      await this.mainWindow.loadFile(filePath);
+    }
 
-        this.mainWindow.on('ready-to-show', () => {
-          this.mainWindow.show();
-        });
+    this.mainWindow.webContents.once('dom-ready', () => {
+      this.mainWindow.show();
+    });
 
-        this.mainWindow.on('close', () => {
-          this.electron.saveWindowInfo(this.mainWindow);
-          this.electron.app.quit();
-        });
-      }),
-      take(1),
-    ).toPromise();
+    this.mainWindow.once('ready-to-show', () => {
+      this.mainWindow.show();
+    });
+
+    this.mainWindow.on('close', () => {
+      this.electron.saveWindowInfo(this.mainWindow);
+      // shouldn't quit except when users settings are set to
+      app.quit();
+    });
   }
 }

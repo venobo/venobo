@@ -12,6 +12,14 @@ export class ElectronService {
 
   constructor(private readonly store: ElectronStore) {}
 
+  async ready(): Promise<electron.App> {
+    if (!this.app.isReady()) {
+      await this.app.whenReady();
+    }
+
+    return this.app;
+  }
+
   saveWindowInfo(window: ElectronWindow) {
     try {
       const windowBounds = JSON.stringify(window.getBounds());

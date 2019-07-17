@@ -6,8 +6,7 @@
   "scripts": {
     "nx": "nx",
     "ng": "ng",
-    "dev": "nps dev.up",
-    "start": "nps dev.up.start",
+    "start": "nps dev",
     "format": "nps format.write",
     "gen-gql": "nps dev.gen-graphql",
     "update": "ng update @nrwl/workspace"
@@ -94,6 +93,7 @@
     "ts-jest": "24.0.2",
     "ts-node": "~8.3.0",
     "tslint": "~5.18.0",
-    "typescript": "~3.5.3"
+    "typescript": "~3.5.3",
+    "wait-on": "^3.3.0"
   }
 }
