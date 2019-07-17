@@ -6,11 +6,14 @@ import { split } from 'apollo-link';
 import { getMainDefinition } from 'apollo-utilities';
 import { OperationDefinitionNode } from 'graphql';
 import { WebSocketLink } from 'apollo-link-ws';
+import { environment } from '@venobo/environment/renderer';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   exports: [
     ApolloModule,
     HttpLinkModule,
+    HttpClientModule,
   ],
 })
 export class GraphQLConfigModule {
@@ -23,14 +26,6 @@ export class GraphQLConfigModule {
     this.apollo.create({
       link: this.createLink(),
       cache: this.cache,
-      defaultOptions: {
-        query: {
-          fetchPolicy: 'network-only',
-        },
-        watchQuery: {
-          fetchPolicy: 'network-only',
-        },
-      },
     });
   }
 
@@ -50,13 +45,13 @@ export class GraphQLConfigModule {
 
   private createHttpLink() {
     return this.httpLink.create({
-      uri: 'http://localhost:8888',
+      uri: `http://localhost:${environment.serverPort}/graphql`,
     });
   }
 
   private createSubscriptionLink() {
     return new WebSocketLink({
-      uri: 'http://localhost:8888',
+      uri: `ws://localhost:${environment.serverPort}/graphql`,
       options: {
         reconnect: true,
       }

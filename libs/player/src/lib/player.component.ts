@@ -1,8 +1,8 @@
 import { Select, Store } from '@ngxs/store';
 import { AppState } from '@venobo/core';
-import { PlayerMedia } from '@venobo/shared';
+// import { PlayerMedia } from '@venobo/shared';
 import { Observable, Subject, Subscription } from 'rxjs';
-import * as renderer from 'wcjs-renderer';
+// import * as renderer from 'wcjs-renderer';
 import { debounceTime } from 'rxjs/operators';
 import {
   AfterViewInit,
@@ -16,8 +16,7 @@ import {
 
 import { PlayerState, PlayerStateModel } from './player.state';
 import { PlayerUiState } from './player-ui.state';
-import { WCJS_PLAYER } from './tokens';
-// import { WcjsPlayer } from 'wcjs-prebuilt';
+// import { WCJS_PLAYER } from './tokens';
 
 @Component({
   selector: 'venobo-player',
@@ -25,7 +24,7 @@ import { WCJS_PLAYER } from './tokens';
   styleUrls: ['./player.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PlayerComponent implements OnInit, OnDestroy, AfterViewInit {
+export class PlayerComponent implements OnInit {
   private subs = new Subscription();
 
   @ViewChild('renderer', { static: true }) renderer: ElementRef<HTMLCanvasElement>;
@@ -37,7 +36,7 @@ export class PlayerComponent implements OnInit, OnDestroy, AfterViewInit {
   @Select(PlayerUiState.isShown) uiShown$: Observable<boolean>;
 
   mediaMouseMove$ = new Subject<void>();
-  media: PlayerMedia = {
+  media = {
     poster: 'https://i-viaplay-com.akamaized.net/viaplay-prod/725/956/1552640864-c4741d7cd72df50296357611b2ac6dbe594a066b.jpg?width=400&height=600',
     backdrop: 'https://i-viaplay-com.akamaized.net/viaplay-prod/303/280/1552661571-0e9a795d293e99d276e1bec3a9e17231d32e10ba.jpg?width=1600&height=900',
     title: '',
@@ -45,8 +44,8 @@ export class PlayerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private readonly store: Store,
-    @Inject(WCJS_PLAYER)
-    private readonly player: any,
+    //@Inject(WCJS_PLAYER)
+    //private readonly player: any,
   ) {}
 
   confirmNavigateBack() {}
@@ -58,8 +57,6 @@ export class PlayerComponent implements OnInit, OnDestroy, AfterViewInit {
   playPause() {}
 
   ngOnInit(): void {
-    console.log(this.player);
-
     this.subs.add(
       this.mediaMouseMove$
         .pipe(debounceTime(3000))
@@ -67,12 +64,12 @@ export class PlayerComponent implements OnInit, OnDestroy, AfterViewInit {
     );
   }
 
-  ngAfterViewInit(): void {
+  /*ngAfterViewInit(): void {
     renderer.bind(this.renderer.nativeElement, this.player);
   }
 
   ngOnDestroy(): void {
     renderer.clear(this.renderer.nativeElement);
     this.subs.unsubscribe();
-  }
+  }*/
 }
