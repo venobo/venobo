@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { TorrentMetadataModule, YtsTorrentProvider } from './torrent';
+import { iDopeTorrentProvider, TorrentMetadataModule, YtsTorrentProvider } from './torrent';
 import { MetadataResolver } from './metadata.resolver';
 import { MetadataService } from './metadata.service';
 
@@ -8,6 +8,7 @@ import { MetadataService } from './metadata.service';
   imports: [
     TorrentMetadataModule.forRoot([
       YtsTorrentProvider,
+      iDopeTorrentProvider,
     ]),
   ],
   providers: [

@@ -9,7 +9,8 @@
     "start": "nps dev",
     "format": "nps format.write",
     "gen-gql": "nps dev.gen-graphql",
-    "update": "ng update @nrwl/workspace"
+    "update": "ng update @nrwl/workspace",
+    "serve:server": "nps dev.server"
   },
   "private": true,
   "dependencies": {

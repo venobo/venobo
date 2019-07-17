@@ -1,5 +1,5 @@
 import { HttpService, Injectable } from '@nestjs/common';
-import { map, tap } from 'rxjs/operators';
+import { map, mapTo, tap } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 import * as cheerio from 'cheerio';
 
@@ -9,6 +9,7 @@ import { UnknownTorrentProviderException } from '../exceptions';
 import { TorrentMetadata } from '../types';
 
 import { BaseTorrentProvider } from './base-torrent.provider';
+import { didResolve } from '../../../common';
 
 @Injectable()
 // tslint:disable-next-line:class-name
@@ -16,10 +17,6 @@ export class iDopeTorrentProvider extends BaseTorrentProvider {
   domains = ['https://idope.se', 'https://idope.unblocked.vet'];
   provider = 'iDope';
   endpoint: string;
-
-  constructor(protected readonly http: HttpService) {
-    super();
-  }
 
   private fetch(type: string, query: string): Observable<TorrentMetadata[]> {
     if (!this.endpoint) {
@@ -61,10 +58,10 @@ export class iDopeTorrentProvider extends BaseTorrentProvider {
     }).get();
   }
 
-  create(): Observable<string> {
-    return this.getReliableEndpoint(this.domains).pipe(
-      tap(endpoint => this.endpoint = endpoint),
-    );
+  create(): Promise<boolean> {
+    return didResolve(async () => {
+      this.endpoint = await this.getReliableEndpoint(this.domains);
+    });
   }
 
   provide(

@@ -1,13 +1,15 @@
-import { Observable, race } from 'rxjs';
-import { mapTo, timeout } from 'rxjs/operators';
-import { HttpService } from '@nestjs/common';
+import { EMPTY, Observable, of, race, zip } from 'rxjs';
+import { catchError, map, mapTo, timeout } from 'rxjs/operators';
+import { HttpService, Inject } from '@nestjs/common';
 import { ResponseType } from 'axios';
 
 import { TorrentMetadataExtendedDetails } from '../torrent-metadata.interface';
 import { TorrentMetadata } from '../types';
+import { any } from '../../../common';
 
 export abstract class BaseTorrentProvider {
-  protected abstract readonly http: HttpService;
+  @Inject(HttpService)
+  protected readonly http: HttpService;
 
   /**
    * Endpoint domains
@@ -23,11 +25,7 @@ export abstract class BaseTorrentProvider {
    */
   public abstract readonly provider: string;
 
-  /**
-   * Get status of torrent endpoint
-   * @returns {Promise<boolean>}
-   */
-  public abstract create(): Promise<any> | Observable<any>;
+  public abstract create(): Promise<boolean>;
 
   /**
    * Fetch movies / shows depending on IMDb ID
@@ -49,12 +47,13 @@ export abstract class BaseTorrentProvider {
   protected getReliableEndpoint(
     endpoints: string[],
     responseType: ResponseType = 'text',
-    dueTimeout = 3000,
-  ): Observable<string> {
-    return race(
-      ...endpoints.map(endpoint =>
+    dueTimeout = 500,
+  ): Promise<string> {
+    return any(
+      endpoints.map(endpoint =>
         this.http.get<string>(endpoint, { responseType })
-          .pipe(timeout(dueTimeout), mapTo(endpoint)),
+          .pipe(timeout(dueTimeout), mapTo(endpoint))
+          .toPromise(),
       ),
     );
   }

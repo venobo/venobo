@@ -1,6 +1,6 @@
 import { HttpService, Injectable } from '@nestjs/common';
 import { from, Observable, of } from 'rxjs';
-import { map, pluck, tap } from 'rxjs/operators';
+import { map, mapTo, pluck, tap } from 'rxjs/operators';
 
 import { UnknownTorrentProviderException } from '../exceptions';
 import { TorrentMetadataExtendedDetails } from '../torrent-metadata.interface';
@@ -9,16 +9,13 @@ import { constructMagnet } from '../utils';
 
 import { YtsMovieTorrent, YtsResponse } from './yts-torrent.interface';
 import { BaseTorrentProvider } from './base-torrent.provider';
+import { didResolve } from '../../../common';
 
 @Injectable()
 export class YtsTorrentProvider extends BaseTorrentProvider {
-  domains = ['yts.am', 'yts.unlocked.vet'];
+  domains = ['yts.lt', 'yts.unblocked.lc'];
   provider = '';
   endpoint: string;
-
-  constructor(protected readonly http: HttpService) {
-    super();
-  }
 
   private createEndpoint(domain: string): string {
     return `https://${domain}/api/v2/list_movies.json`;
@@ -60,14 +57,14 @@ export class YtsTorrentProvider extends BaseTorrentProvider {
     };
   }
 
-  create(): Observable<string> {
-    const endpoints = this.domains.map(domain => {
-      return this.createEndpoint(domain);
-    });
+  create(): Promise<boolean> {
+    return didResolve(async () => {
+      const endpoints = this.domains.map(domain => {
+        return this.createEndpoint(domain);
+      });
 
-    return this.getReliableEndpoint(endpoints).pipe(
-      tap(endpoint => this.endpoint = endpoint),
-    );
+      this.endpoint = await this.getReliableEndpoint(endpoints);
+    });
   }
 
   provide(
