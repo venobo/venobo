@@ -6,7 +6,7 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { NgxsStoragePluginModule } from '@ngxs/storage-plugin';
 import { NgxsModule } from '@ngxs/store';
-import { environment } from '@venobo/environment';
+import { environment } from '@venobo/environment/renderer';
 import { noop } from '@venobo/shared';
 
 import { AppState } from './state';
