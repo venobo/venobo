@@ -1,12 +1,4 @@
-import { TorrentAudioCodec, TorrentVideoCodec } from './enums';
+import { WithOptional } from '../../common';
+import { TorrentMetadata } from './types';
 
-export interface TorrentMetadataExtendedDetails {
-  imdbId?: string;
-  season?: number | string;
-  episode?: number | string;
-}
-
-export interface TorrentCodecs {
-  audio: TorrentAudioCodec;
-  video: TorrentVideoCodec;
-}
+export type TorrentProviderMetadata = WithOptional<Omit<TorrentMetadata, 'resolution' | 'codec'>, 'health' | 'quality' | 'size'>;

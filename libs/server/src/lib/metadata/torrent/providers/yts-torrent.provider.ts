@@ -1,15 +1,14 @@
-import { HttpService, Injectable } from '@nestjs/common';
-import { from, Observable, of } from 'rxjs';
-import { map, mapTo, pluck, tap } from 'rxjs/operators';
+import { Injectable } from '@nestjs/common';
+import { Observable, of } from 'rxjs';
+import { map, pluck } from 'rxjs/operators';
 
 import { UnknownTorrentProviderException } from '../exceptions';
-import { TorrentMetadataExtendedDetails } from '../torrent-metadata.interface';
-import { TorrentMetadata } from '../types';
+import { TorrentProviderMetadata } from '../torrent-metadata.interface';
 import { constructMagnet } from '../utils';
-
+import { TorrentMetadataSearchInput } from '../types';
 import { YtsMovieTorrent, YtsResponse } from './yts-torrent.interface';
 import { BaseTorrentProvider } from './base-torrent.provider';
-import { didResolve } from '../../../common';
+import { MetadataType } from '../../types';
 
 @Injectable()
 export class YtsTorrentProvider extends BaseTorrentProvider {
@@ -40,41 +39,30 @@ export class YtsTorrentProvider extends BaseTorrentProvider {
     );
   }
 
-  private formatTorrent(torrent: YtsMovieTorrent): TorrentMetadata {
+  private formatTorrent(torrent: YtsMovieTorrent): TorrentProviderMetadata {
     return {
       metadata: torrent.url + torrent.hash || torrent.hash,
       magnet: constructMagnet(torrent.hash),
       provider: this.provider,
-      resolution: torrent.quality,
+      // resolution: torrent.quality,
       seeders: torrent.seeds,
       leechers: torrent.peers,
       verified: true,
-      ///
-      health: null,
-      codec: null,
-      size: null,
-      quality: null,
     };
   }
 
-  create(): Promise<boolean> {
-    return didResolve(async () => {
-      const endpoints = this.domains.map(domain => {
-        return this.createEndpoint(domain);
-      });
-
-      this.endpoint = await this.getReliableEndpoint(endpoints);
+  async create() {
+    const endpoints = this.domains.map(domain => {
+      return this.createEndpoint(domain);
     });
+
+    this.endpoint = await this.getReliableEndpoint(endpoints);
   }
 
-  provide(
-    search: string,
-    type: string,
-    { imdbId }: TorrentMetadataExtendedDetails = {},
-  ): Observable<TorrentMetadata[]> {
+  provide({ imdbId, query, type }: TorrentMetadataSearchInput): Observable<TorrentProviderMetadata[]> {
     switch (type) {
-      case 'movies':
-        return this.fetch((imdbId || search))
+      case MetadataType.MOVIE:
+        return this.fetch(imdbId || query)
           .pipe(map(({ data }) => {
             if (data.movie_count === 0) return [];
 

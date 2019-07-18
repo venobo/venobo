@@ -1,9 +1,11 @@
 //const reverse = p => new Promise((resolve, reject) => Promise.resolve(p).then(reject, resolve));
 //export const any = arr => reverse(Promise.all(arr.map(reverse)));
 
-export async function didResolve(promiseFn: () => Promise<any>) {
+export type WithOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+
+export async function didResolve(fn: () => Promise<any>) {
   try {
-    await promiseFn();
+    await fn();
 
     return true;
   } catch {

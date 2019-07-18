@@ -4,10 +4,12 @@
 
 import shared from './shared';
 
+require('dotenv').config();
+
 export const environment = {
   ...shared,
   production: false,
-  serverPort: 3000,
+  serverPort: process.env.SERVER_PORT,
 };
 
 /*

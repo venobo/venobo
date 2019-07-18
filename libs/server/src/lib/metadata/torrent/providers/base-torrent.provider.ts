@@ -1,15 +1,20 @@
-import { EMPTY, Observable, of, race, zip } from 'rxjs';
-import { catchError, map, mapTo, timeout } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { mapTo, timeout } from 'rxjs/operators';
 import { HttpService, Inject } from '@nestjs/common';
 import { ResponseType } from 'axios';
+import { Browser } from 'puppeteer';
 
-import { TorrentMetadataExtendedDetails } from '../torrent-metadata.interface';
-import { TorrentMetadata } from '../types';
-import { any } from '../../../common';
+import { any, BROWSER } from '../../../common';
+
+import { TorrentProviderMetadata } from '../torrent-metadata.interface';
+import { TorrentMetadataSearchInput } from '../types';
 
 export abstract class BaseTorrentProvider {
   @Inject(HttpService)
   protected readonly http: HttpService;
+
+  @Inject(BROWSER)
+  protected readonly browser: Browser;
 
   /**
    * Endpoint domains
@@ -25,20 +30,9 @@ export abstract class BaseTorrentProvider {
    */
   public abstract readonly provider: string;
 
-  public abstract create(): Promise<boolean>;
+  public abstract create(): Promise<void>;
 
-  /**
-   * Fetch movies / shows depending on IMDb ID
-   * @param {string} search
-   * @param {string} type
-   * @param {ExtendedDetails} extendedDetails
-   * @returns {Promise<ITorrent[]>}
-   */
-  public abstract provide(
-    search: string,
-    type: string,
-    extendedDetails: TorrentMetadataExtendedDetails,
-  ): Observable<TorrentMetadata[]>;
+  public abstract provide(input: TorrentMetadataSearchInput): Promise<TorrentProviderMetadata[]> | Observable<TorrentProviderMetadata[]>;
 
   /**
    * Get endpoint URL by requesting the different domains

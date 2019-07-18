@@ -136,7 +136,8 @@
         "serve": {
           "builder": "@nrwl/node:execute",
           "options": {
-            "buildTarget": "main:build"
+            "buildTarget": "main:build",
+            "port": 0
           }
         },
         "build": {
@@ -146,9 +147,7 @@
             "main": "apps/main/src/main.ts",
             "tsConfig": "apps/main/tsconfig.app.json",
             "webpackConfig": "apps/main/webpack.config.js",
-            "assets": [
-              "apps/main/src/assets"
-            ]
+            "assets": ["apps/main/src/assets"]
           },
           "configurations": {
             "production": {
@@ -319,6 +318,37 @@
             "jestConfig": "libs/server/jest.config.js",
             "tsConfig": "libs/server/tsconfig.spec.json",
             "setupFile": "libs/server/src/test-setup.ts"
+          }
+        }
+      },
+      "schematics": {
+        "@nrwl/angular:component": {
+          "styleext": "scss"
+        }
+      }
+    },
+    "server-blazar": {
+      "projectType": "library",
+      "root": "libs/server/blazar",
+      "sourceRoot": "libs/server/blazar/src",
+      "prefix": "venobo",
+      "architect": {
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/server/blazar/tsconfig.lib.json",
+              "libs/server/blazar/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/server/blazar/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/server/blazar/jest.config.js",
+            "tsConfig": "libs/server/blazar/tsconfig.spec.json",
+            "setupFile": "libs/server/blazar/src/test-setup.ts"
           }
         }
       },

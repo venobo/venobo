@@ -1,15 +1,11 @@
-import { HttpService, Injectable } from '@nestjs/common';
-import { map, mapTo, tap } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
-import * as cheerio from 'cheerio';
+import { Injectable } from '@nestjs/common';
 
-import { TorrentMetadataExtendedDetails } from '../torrent-metadata.interface';
-import { constructMagnet, formatSeasonEpisodeToString } from '../utils';
+import { TorrentProviderMetadata } from '../torrent-metadata.interface';
+import { formatSeasonEpisodeToString } from '../utils';
 import { UnknownTorrentProviderException } from '../exceptions';
-import { TorrentMetadata } from '../types';
-
 import { BaseTorrentProvider } from './base-torrent.provider';
-import { didResolve } from '../../../common';
+import { TorrentMetadataSearchInput } from '../types';
+import { MetadataType } from '../../types';
 
 @Injectable()
 // tslint:disable-next-line:class-name
@@ -18,68 +14,57 @@ export class iDopeTorrentProvider extends BaseTorrentProvider {
   provider = 'iDope';
   endpoint: string;
 
-  private fetch(type: string, query: string): Observable<TorrentMetadata[]> {
+  private getUrl(query: string, type: MetadataType, page: number) {
+    return `${this.endpoint}/torrent-list/${query}/?c=${type === MetadataType.MOVIE ? 1 : 3}&p=${page}`;
+  }
+
+  private async fetch(query: string, type: MetadataType): Promise<TorrentProviderMetadata[]> {
     if (!this.endpoint) {
       throw new UnknownTorrentProviderException(
         iDopeTorrentProvider,
       );
     }
 
-    const url = `${this.endpoint}/torrent-list/${query}/`;
-    return this.http.get<string>(url, {
-      responseType: 'text',
-      params: {
-        c: type === 'movies' ? 1 : 3,
-      },
-    })
-      .pipe(map(({ data }) => this.parse(data)));
+    const url = this.getUrl(query, type, 1);
+    const page = await this.browser.newPage();
+    await page.goto(url);
+
+    const metadata = await page.evaluate(provider => {
+      return Array.from(document.querySelectorAll('.resultdiv')).map((el: HTMLElement) => {
+        const top = el.querySelector('.resultdivtop');
+        const bottom = el.querySelector('.resultdivbotton');
+        const magnet = bottom.querySelector('.hideinfohash').textContent;
+
+        return {
+          metadata: top.querySelector('.resultdivtopname').textContent.trim(),
+          size: bottom.querySelector('.resultdivbottonlength').textContent,
+          seeders: Number(bottom.querySelector('.resultdivbottonseed').textContent),
+          // constructMagnet
+          magnet:  `magnet?:xt=urn:btih:${magnet}`,
+          provider,
+        };
+      });
+    }, this.provider);
+
+    await page.close();
+
+    return metadata;
   }
 
-  private parse(html: string): TorrentMetadata[] {
-    const $ = cheerio.load(html);
-    const { provider } = this;
-
-    return $('.resultdiv').map(function(): TorrentMetadata {
-      const $botton = $(this).find('.resultdivbotton');
-
-      return {
-        metadata: $(this).find('.resultdivtop .resultdivtopname').text().trim(),
-        size: $botton.find('.resultdivbottonlength').text(),
-        seeders: Number($botton.find('.resultdivbottonseed').text()),
-        // sadly fetching the magnet this way doesnt work lol
-        magnet: constructMagnet($botton.find('.hideinfohash').first().text()),
-        quality: null,
-        resolution: null,
-        codec: null,
-        leechers: null,
-        health: null,
-        provider,
-      };
-    }).get();
+  async create() {
+    this.endpoint = await this.getReliableEndpoint(this.domains);
   }
 
-  create(): Promise<boolean> {
-    return didResolve(async () => {
-      this.endpoint = await this.getReliableEndpoint(this.domains);
-    });
-  }
-
-  provide(
-    search: string,
-    type: string,
-    extendedDetails: TorrentMetadataExtendedDetails = {},
-  ): Observable<TorrentMetadata[]> {
+  async provide({ query, type, season, episode }: TorrentMetadataSearchInput): Promise<TorrentProviderMetadata[]> {
     switch (type) {
-      case 'movies':
-        return this.fetch(type, search);
+      case MetadataType.MOVIE:
+        return await this.fetch(query, type);
 
-      case 'shows':
-        return this.fetch(type,
-          `${search} ${formatSeasonEpisodeToString(extendedDetails)}`,
-        );
+      case MetadataType.TV:
+        return await this.fetch(`${query} ${formatSeasonEpisodeToString(season, episode)}`, type);
 
       default:
-        return of([]);
+        return [];
     }
   }
 }
