@@ -1,13 +1,20 @@
-import { Observable, race } from 'rxjs';
+import { Observable } from 'rxjs';
 import { mapTo, timeout } from 'rxjs/operators';
-import { HttpService } from '@nestjs/common';
+import { HttpService, Inject } from '@nestjs/common';
 import { ResponseType } from 'axios';
+import { Browser } from 'puppeteer';
 
-import { TorrentMetadataExtendedDetails } from '../torrent-metadata.interface';
-import { TorrentMetadata } from '../types';
+import { any, BROWSER } from '../../../common';
+
+import { TorrentProviderMetadata } from '../torrent-metadata.interface';
+import { TorrentMetadataSearchInput } from '../types';
 
 export abstract class BaseTorrentProvider {
-  protected abstract readonly http: HttpService;
+  @Inject(HttpService)
+  protected readonly http: HttpService;
+
+  @Inject(BROWSER)
+  protected readonly browser: Browser;
 
   /**
    * Endpoint domains
@@ -23,24 +30,9 @@ export abstract class BaseTorrentProvider {
    */
   public abstract readonly provider: string;
 
-  /**
-   * Get status of torrent endpoint
-   * @returns {Promise<boolean>}
-   */
-  public abstract create(): Promise<any> | Observable<any>;
+  public abstract create(): Promise<void>;
 
-  /**
-   * Fetch movies / shows depending on IMDb ID
-   * @param {string} search
-   * @param {string} type
-   * @param {ExtendedDetails} extendedDetails
-   * @returns {Promise<ITorrent[]>}
-   */
-  public abstract provide(
-    search: string,
-    type: string,
-    extendedDetails: TorrentMetadataExtendedDetails,
-  ): Observable<TorrentMetadata[]>;
+  public abstract provide(input: TorrentMetadataSearchInput): Promise<TorrentProviderMetadata[]> | Observable<TorrentProviderMetadata[]>;
 
   /**
    * Get endpoint URL by requesting the different domains
@@ -49,12 +41,13 @@ export abstract class BaseTorrentProvider {
   protected getReliableEndpoint(
     endpoints: string[],
     responseType: ResponseType = 'text',
-    dueTimeout = 3000,
-  ): Observable<string> {
-    return race(
-      ...endpoints.map(endpoint =>
+    dueTimeout = 500,
+  ): Promise<string> {
+    return any(
+      endpoints.map(endpoint =>
         this.http.get<string>(endpoint, { responseType })
-          .pipe(timeout(dueTimeout), mapTo(endpoint)),
+          .pipe(timeout(dueTimeout), mapTo(endpoint))
+          .toPromise(),
       ),
     );
   }

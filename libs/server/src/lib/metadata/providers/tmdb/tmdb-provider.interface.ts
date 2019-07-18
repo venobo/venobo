@@ -3,12 +3,22 @@ export interface TMDbGenre {
   name: string;
 }
 
+export enum TMDbMediaType {
+  MOVIE = 'movie',
+  TV = 'tv',
+}
+
+export interface TMDbMetadataMap {
+  [TMDbMediaType.MOVIE]: TMDbMovieResponse;
+  [TMDbMediaType.TV]: TMDbShowResponse;
+}
+
 export interface TMDbMetadata {
   poster_path: string;
   backdrop_path: string;
-  media_type: string;
+  media_type: TMDbMediaType;
   overview: string;
-  popularity: string;
+  popularity: number;
   id: number;
   vote_average: number;
   vote_count: number;
@@ -42,11 +52,11 @@ export interface TMDbShowResponse extends TMDbMetadata {
   original_name: string;
 }
 
-export type TMDbResponse = TMDbMovieResponse | TMDbShowResponse;
+export type TMDbResponseUnion = TMDbMovieResponse | TMDbShowResponse;
 
-export interface TMDbSearchResponse {
+export interface TMDbResultsResponse {
   page: number;
   total_results: number;
   total_pages: number;
-  results: TMDbResponse[];
+  results: TMDbResponseUnion[];
 }

@@ -28,10 +28,10 @@ module.exports = {
     dev: {
       default: nps.series(
         'nps dev.server',
-        nps.concurrent(
-          'nps dev.codegen',
-          'nps dev.renderer'
-        ),
+        nps.concurrent({
+          codegen: 'nps dev.codegen',
+          renderer: 'nps dev.renderer'
+        }),
         'nps dev.main',
       ),
       server: 'ng serve main',
@@ -39,10 +39,7 @@ module.exports = {
       renderer: 'ng serve renderer --aot',
       main: {
         build: 'ng build main --maxWorkers=4 --noSourceMap',
-        default: nps.series(
-          'nps dev.main.build',
-          'nps start',
-        ),
+        default: nps.series.nps('dev.main.build', 'start'),
         start: 'electron dist/apps/main/main --inspect=9229'
       },
       up: {
@@ -146,8 +143,8 @@ module.exports = {
         nps.series(
           'nps dev.gen-graphql',
           nps.concurrent({
-            server: 'ng build APPLICATION --prod --maxWorkers=4 --noSourceMap',
-            client: 'ng build renderer --configuration=APPLICATION'
+            main: 'ng build APPLICATION --prod --maxWorkers=4 --noSourceMap',
+            renderer: 'ng build renderer --prod'
           })
         )
       ),

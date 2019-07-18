@@ -22,7 +22,8 @@
       "@venobo/environment/*": ["apps/*/src/environments"],
       "@venobo/shared": ["libs/shared/src"],
       "@venobo/player": ["libs/player/src"],
-      "@venobo/server": ["libs/server/src"]
+      "@venobo/server": ["libs/server/src"],
+      "@venobo/server/blazar": ["libs/server/blazar/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

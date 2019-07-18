@@ -1,4 +1,3 @@
-import { TorrentMetadataExtendedDetails } from './torrent-metadata.interface';
 import { TorrentMetadata } from './types';
 import {
   TorrentAudioCodec,
@@ -138,7 +137,7 @@ export function determineAudioCodec(metadata: string): TorrentAudioCodec {
 export function determineQuality(metadata: string): TorrentQuality {
   return compareMultipleOf(metadata, {
     [TorrentQuality.DVDRip]: ['DVDRip', 'DVD'],
-    ...keyValue([
+    ...keyValues([
       TorrentQuality.WEB_DL,
       TorrentQuality.WEBRIP,
       TorrentQuality.HDRip,
@@ -191,9 +190,7 @@ export function sortTorrentsBySeeders(torrents: TorrentMetadata[]): TorrentMetad
   });
 }
 
-export function formatSeasonEpisodeToString(
-  { season, episode }: TorrentMetadataExtendedDetails,
-): string {
+export function formatSeasonEpisodeToString(season: string | number, episode: string | number): string {
   return (
     ('s' + (String(season).length === 1 ? '0' + season : season)) +
     ('e' + (String(episode).length === 1 ? '0' + episode : episode))

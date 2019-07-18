@@ -1,6 +1,10 @@
 import { Resolver } from '@nestjs/graphql';
+import { Query } from '@nestjs/common';
 
-import { Metadata } from './types';
+import { MetadataUnion } from './types';
 
-@Resolver(() => Metadata)
-export class MetadataResolver {}
+@Resolver()
+export class MetadataResolver {
+  //@Query(() => [MetadataUnion])
+  //search() {}
+}

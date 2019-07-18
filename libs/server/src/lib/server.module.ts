@@ -2,7 +2,7 @@ import { Module, Type } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { NestFactory } from '@nestjs/core';
 
-import { MetadataModule } from './metadata';
+import { MetadataModule, TMDbMetadataProvider } from './metadata';
 
 export async function startServer(entryModule: Type<any>, port: number) {
   const app = await NestFactory.create(entryModule);
@@ -22,7 +22,7 @@ export function createServerModule(...imports: Type<any>[]) {
         },
         autoSchemaFile: true,
       }),
-      MetadataModule,
+      MetadataModule.forRoot(TMDbMetadataProvider),
       ...imports,
     ],
   })
