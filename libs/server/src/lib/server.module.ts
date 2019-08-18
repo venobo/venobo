@@ -6,6 +6,7 @@ import { MetadataModule, TMDbMetadataProvider } from './metadata';
 
 export async function startServer(entryModule: Type<any>, port: number) {
   const app = await NestFactory.create(entryModule);
+  app.enableShutdownHooks();
 
   await app.listen(port, () => {
     console.log(`GraphQL server listening on port ${port}`);
